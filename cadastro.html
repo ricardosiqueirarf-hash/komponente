@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Imagens + Tags | ColorGlass</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  body { font-family: Arial, sans-serif; background:#0b1020; color:#e5e7eb; padding:20px; }
+  h1 { font-size:18px; }
+  .status { margin-top:10px; white-space:pre-wrap; background: rgba(2,6,23,.55); padding:10px; border-radius:8px; max-height:200px; overflow:auto; }
+  .file { margin-top:10px; border:1px solid #222; padding:10px; border-radius:8px; background: rgba(255,255,255,.03); }
+  .file span { display:inline-block; margin-right:6px; background: rgba(59,130,246,.2); padding:2px 6px; border-radius:999px; font-size:12px; }
+  input[type=text] { padding:6px; border-radius:6px; border:1px solid #555; margin-right:4px; width:200px; }
+  button { padding:6px 10px; border:none; border-radius:6px; background:#3b82f6; color:white; cursor:pointer; margin-right:4px; }
+  button.del { background:#ef4444; }
+</style>
+</head>
+<body>
+
+<h1>Imagens + Tags | ColorGlass</h1>
+<button id="listar">Listar imagens</button>
+<div id="listaWrap"></div>
+<div class="status" id="status"></div>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+// --- SUPABASE CONFIG ---
+const SUPABASE_URL = "https://azjqiouvwpazbpzvjlhe.supabase.co";
+const SUPABASE_KEY = "sb_publishable_yINVCFwIqlNc9ropYuZxDg_eiJNDhsz";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const BUCKET = "imagens";          // bucket de imagens
+const TAGS_TABLE = "imagetags";    // tabela que guarda tags
+const TAG_COLUMN = "tags";         // coluna de tags (array ou json)
+
+// --- ELEMENTOS ---
+const listaWrap = document.getElementById("listaWrap");
+const status = document.getElementById("status");
+
+// --- UTILIDADES ---
+function append(msg){ status.innerText += msg + "\n"; }
+function parseTags(str){ return Array.from(new Set((str||"").split(",").map(s=>s.trim()).filter(Boolean))); }
+function renderTags(tags){ return (tags||[]).map(t=>`<span>${t}</span>`).join(""); }
+
+// --- LISTAR ---
+async function listImages(){
+  append("Listando imagens...");
+
+  // listar todos os arquivos do bucket
+  const { data: files, error } = await supabase.storage.from(BUCKET).list("", { limit: 500 });
+  if(error){ append("Erro: "+error.message); return; }
+  if(!files || !files.length){ append("Nenhum arquivo encontrado."); listaWrap.innerHTML=""; return; }
+
+  const ids = files.map(f=>f.name);
+
+  // buscar tags
+  const { data: tagsData, error: tagsErr } = await supabase.from(TAGS_TABLE).select("*").in("id", ids);
+  if(tagsErr){ append("Erro ao buscar tags: "+tagsErr.message); }
+
+  const tagsMap = new Map();
+  if(tagsData){
+    for(const row of tagsData){ tagsMap.set(row.id, row[TAG_COLUMN] || []); }
+  }
+
+  // renderizar
+  let html = "";
+  for(const f of files){
+    const t = tagsMap.get(f.name) || [];
+    html += `
+      <div class="file">
+        <b>${f.name}</b><br>
+        <div>${renderTags(t)}</div>
+        <input type="text" placeholder="nova tag(s) separadas por vírgula" id="input-${f.name}">
+        <button data-add="${f.name}">Adicionar tags</button>
+        <button class="del" data-del="${f.name}">Apagar todas tags</button>
+        <button data-open="${f.name}">Abrir</button>
+      </div>
+    `;
+  }
+  listaWrap.innerHTML = html;
+
+  // --- EVENTOS ---
+  listaWrap.querySelectorAll("button[data-add]").forEach(btn=>{
+    btn.onclick = async ()=>{
+      const id = btn.getAttribute("data-add");
+      const inp = document.getElementById("input-"+id);
+      const newTags = parseTags(inp.value);
+      if(!newTags.length){ append("Sem tags para adicionar."); return; }
+
+      // buscar tags atuais
+      const { data: existing, error: exErr } = await supabase.from(TAGS_TABLE).select(TAG_COLUMN).eq("id", id).maybeSingle();
+      if(exErr){ append("Erro: "+exErr.message); return; }
+      const merged = Array.from(new Set([...(existing?.[TAG_COLUMN]||[]), ...newTags]));
+
+      // upsert
+      const { error: upErr } = await supabase.from(TAGS_TABLE).upsert({ id, [TAG_COLUMN]: merged });
+      if(upErr){ append("Erro ao adicionar tags: "+upErr.message); return; }
+      append("Tags adicionadas em "+id);
+      listImages();
+    };
+  });
+
+  listaWrap.querySelectorAll("button[data-del]").forEach(btn=>{
+    btn.onclick = async ()=>{
+      const id = btn.getAttribute("data-del");
+      const { error: delErr } = await supabase.from(TAGS_TABLE).update({ [TAG_COLUMN]: [] }).eq("id", id);
+      if(delErr){ append("Erro ao apagar tags: "+delErr.message); return; }
+      append("Tags apagadas em "+id);
+      listImages();
+    };
+  });
+
+  listaWrap.querySelectorAll("button[data-open]").forEach(btn=>{
+    btn.onclick = async ()=>{
+      const id = btn.getAttribute("data-open");
+      const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(id, 60);
+      if(error){ append("Erro ao abrir: "+error.message); return; }
+      window.open(data.signedUrl, "_blank");
+    };
+  });
+}
+
+// --- BOTÃO PRINCIPAL ---
+document.getElementById("listar").onclick = listImages;
+
+</script>
+</body>
+</html>
