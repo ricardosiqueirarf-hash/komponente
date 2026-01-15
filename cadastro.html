@@ -13,14 +13,8 @@ body{
   background:#0b1020;
   color:#e5e7eb;
 }
-h1{
-  margin-bottom:10px;
-}
-#status{
-  font-size:13px;
-  color:#9ca3af;
-  margin-bottom:15px;
-}
+h1{margin-bottom:10px}
+#status{font-size:13px;color:#9ca3af;margin-bottom:14px}
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
@@ -41,15 +35,16 @@ img{
 <div id="status">Carregando…</div>
 <div id="grid" class="grid"></div>
 
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL = "https://azjqiouvwpazbpzvjlhe.supabase.co";
 const SUPABASE_KEY = "sb_publishable_yINVCFwIqlNc9ropYuZxDg_eiJNDhsz";
-
-// ESTE É O NOME DO BUCKET
 const BUCKET = "images";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+/*
+  O SDK do Supabase JÁ está carregado no seu site,
+  então NÃO importamos de novo.
+*/
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const grid = document.getElementById("grid");
 const status = document.getElementById("status");
@@ -61,7 +56,7 @@ function publicUrl(path){
 async function listarImagens(){
   status.innerText = "Buscando imagens no Supabase...";
 
-  const { data, error } = await supabase
+  const { data, error } = await sb
     .storage
     .from(BUCKET)
     .list("", { limit: 1000 });
@@ -95,4 +90,5 @@ listarImagens();
 
 </body>
 </html>
+
 
