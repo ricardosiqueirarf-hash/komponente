@@ -48,7 +48,7 @@ async function listImages(){
   append("Listando imagens...");
 
   // listar todos os arquivos do bucket
-  const { data: files, error } = await supabase.storage.from(BUCKET).list("", { limit: 500 });
+const { data: files, error } = await supabase.storage.from(BUCKET).list("imagens", { limit: 500 });
   if(error){ append("Erro: "+error.message); return; }
   if(!files || !files.length){ append("Nenhum arquivo encontrado."); listaWrap.innerHTML=""; return; }
 
@@ -127,3 +127,4 @@ document.getElementById("listar").onclick = listImages;
 </script>
 </body>
 </html>
+
