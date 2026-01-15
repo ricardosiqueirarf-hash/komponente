@@ -1,88 +1,1623 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Loja de Móveis Planejados</title>
-    <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-        }
-        header {
-            background-color: #3e2723;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        main {
-            padding: 30px;
-        }
-        .section {
-            background-color: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-        footer {
-            background-color: #3e2723;
-            color: white;
-            text-align: center;
-            padding: 15px;
-        }
-        a {
-            color: #ffcc80;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Komponente | Móveis Planejados Sob Medida</title>
+  <meta name="description" content="Komponente Móveis Planejados. Há 10 anos criando móveis sob medida, personalizados, com acabamento premium e projeto inteligente."/>
+  <meta name="theme-color" content="#0B0D10"/>
+
+  <style>
+    :root{
+      --bg:#0B0D10;
+      --panel:#10141A;
+      --panel2:#0E1217;
+      --line:rgba(255,255,255,.08);
+      --text:rgba(255,255,255,.88);
+      --muted:rgba(255,255,255,.62);
+      --muted2:rgba(255,255,255,.45);
+      --brand:#D9B77E;   /* dourado leve */
+      --brand2:#5ED3FF;  /* azul neon discreto */
+      --ok:#6CFFB5;
+      --shadow: 0 30px 80px rgba(0,0,0,.45);
+      --radius: 10px; /* retilíneo: pouco arredondado */
+      --max: 1180px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 80% -10%, rgba(94,211,255,.10), transparent 60%),
+        radial-gradient(1100px 700px at 10% 0%, rgba(217,183,126,.10), transparent 55%),
+        linear-gradient(180deg, #07090C, var(--bg));
+      overflow-x:hidden;
+    }
+
+    /* Grid lines background */
+    .gridlines::before{
+      content:"";
+      position:fixed; inset:0;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(700px 500px at 50% 20%, black 35%, transparent 70%);
+      opacity:.30;
+      pointer-events:none;
+      z-index:-2;
+    }
+
+    /* Scroll progress */
+    .progress{
+      position:fixed; top:0; left:0; height:3px; width:0%;
+      background:linear-gradient(90deg, var(--brand), var(--brand2));
+      z-index:9999;
+      box-shadow:0 0 25px rgba(94,211,255,.25);
+    }
+
+    /* Subtle cursor glow */
+    .cursor-glow{
+      position:fixed; width:600px; height:600px; border-radius:999px;
+      background: radial-gradient(circle, rgba(94,211,255,.14), transparent 55%);
+      transform:translate(-50%,-50%);
+      pointer-events:none;
+      z-index:-1;
+      filter: blur(2px);
+      opacity:.75;
+      transition: opacity .25s ease;
+    }
+
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:0 20px}
+
+    /* Header */
+    header{
+      position:sticky; top:0; z-index:50;
+      background: rgba(11,13,16,.72);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0;
+      gap:14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      user-select:none;
+    }
+    .mark{
+      width:38px; height:38px;
+      border:1px solid var(--line);
+      background:
+        linear-gradient(135deg, rgba(217,183,126,.18), rgba(94,211,255,.10)),
+        linear-gradient(180deg, rgba(255,255,255,.06), transparent);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+      display:grid; place-items:center;
+    }
+    .mark svg{opacity:.9}
+    .brand h1{
+      font-size:14px; letter-spacing:.24em; margin:0;
+      text-transform:uppercase;
+    }
+    .brand span{
+      display:block;
+      font-size:12px;
+      color:var(--muted2);
+      margin-top:2px;
+      letter-spacing:.08em;
+    }
+    nav{
+      display:flex; align-items:center; gap:18px;
+    }
+    nav a{
+      font-size:12px; letter-spacing:.18em; text-transform:uppercase;
+      color:var(--muted);
+      padding:8px 10px;
+      border:1px solid transparent;
+      transition: all .18s ease;
+    }
+    nav a:hover{
+      color:var(--text);
+      border-color:var(--line);
+      background:rgba(255,255,255,.03);
+    }
+    .actions{
+      display:flex; align-items:center; gap:10px;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px;
+      padding:10px 14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+      color:var(--text);
+      font-size:12px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      cursor:pointer;
+      transition:transform .16s ease, background .16s ease, border-color .16s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.14)}
+    .btn.primary{
+      border-color:rgba(217,183,126,.38);
+      background: linear-gradient(180deg, rgba(217,183,126,.18), rgba(255,255,255,.02));
+      box-shadow: 0 0 0 1px rgba(217,183,126,.10) inset;
+    }
+    .btn.primary:hover{border-color:rgba(217,183,126,.55)}
+    .burger{
+      display:none;
+      width:42px; height:42px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+      cursor:pointer;
+    }
+    .burger span{
+      display:block; height:1px; width:18px;
+      background:rgba(255,255,255,.75);
+      margin:0 auto;
+      position:relative;
+    }
+    .burger span::before,.burger span::after{
+      content:""; position:absolute; left:0; width:18px; height:1px;
+      background:rgba(255,255,255,.75);
+    }
+    .burger span::before{top:-6px}
+    .burger span::after{top:6px}
+
+    /* Mobile nav */
+    .mobile-nav{
+      display:none;
+      border-top:1px solid var(--line);
+      padding:10px 0 14px;
+    }
+    .mobile-nav a{
+      display:block;
+      padding:12px 10px;
+      border:1px solid transparent;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      font-size:12px;
+    }
+    .mobile-nav a:hover{
+      color:var(--text);
+      border-color:var(--line);
+      background:rgba(255,255,255,.03);
+    }
+
+    /* Hero */
+    .hero{
+      padding:70px 0 34px;
+      position:relative;
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:26px;
+      align-items:stretch;
+    }
+    .hero h2{
+      margin:0 0 14px;
+      font-size:42px;
+      line-height:1.06;
+      letter-spacing:-.02em;
+    }
+    .hero p{
+      margin:0 0 22px;
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.65;
+      max-width:56ch;
+    }
+    .kicker{
+      display:inline-flex;
+      gap:10px; align-items:center;
+      color:rgba(255,255,255,.78);
+      font-size:12px; letter-spacing:.22em;
+      text-transform:uppercase;
+      margin-bottom:12px;
+    }
+    .kicker i{
+      width:10px; height:10px;
+      border:1px solid rgba(217,183,126,.55);
+      background:rgba(217,183,126,.20);
+      display:inline-block;
+    }
+    .hero-cta{
+      display:flex; gap:12px; flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+    .pill-row{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+      font-size:12px;
+      letter-spacing:.08em;
+      color:rgba(255,255,255,.74);
+    }
+    .pill b{color:rgba(255,255,255,.88)}
+    .pill .dot{
+      width:6px; height:6px; background:var(--ok);
+      box-shadow:0 0 16px rgba(108,255,181,.25);
+    }
+
+    .hero-card{
+      border:1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)),
+        radial-gradient(700px 420px at 30% 10%, rgba(217,183,126,.14), transparent 55%),
+        radial-gradient(900px 520px at 90% 0%, rgba(94,211,255,.10), transparent 60%);
+      box-shadow: var(--shadow);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+      min-height: 320px;
+    }
+    .hero-card::before{
+      content:"";
+      position:absolute; inset:-1px;
+      border:1px solid rgba(255,255,255,.08);
+      pointer-events:none;
+    }
+    .hero-card .img{
+      height:190px;
+      border:1px solid rgba(255,255,255,.08);
+      background:
+        linear-gradient(135deg, rgba(217,183,126,.12), rgba(94,211,255,.08)),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px 18px);
+      position:relative;
+      overflow:hidden;
+    }
+    .hero-card .img::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(420px 180px at 20% 30%, rgba(255,255,255,.12), transparent 60%);
+      opacity:.7;
+      transform: translateX(-12%);
+      transition:transform .7s ease;
+    }
+    .hero-card:hover .img::after{ transform: translateX(10%); }
+
+    .hero-card .caption{
+      padding-top:14px;
+      display:grid;
+      gap:10px;
+    }
+    .caption .row{
+      display:flex; justify-content:space-between; gap:14px;
+      font-size:12px; color:var(--muted);
+      letter-spacing:.12em; text-transform:uppercase;
+    }
+    .caption .row strong{color:rgba(255,255,255,.85); font-weight:600}
+    .scanline{
+      position:absolute; left:-20%; top:-50%;
+      width:140%; height:40%;
+      background: linear-gradient(180deg, transparent, rgba(255,255,255,.08), transparent);
+      transform: rotate(12deg);
+      animation: scan 5.6s linear infinite;
+      opacity:.35;
+      pointer-events:none;
+    }
+    @keyframes scan{
+      0%{ transform:translateY(-20%) rotate(12deg); }
+      100%{ transform:translateY(260%) rotate(12deg); }
+    }
+
+    /* Section base */
+    section{padding:56px 0}
+    .section-title{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:18px;
+      margin-bottom:18px;
+    }
+    .section-title h3{
+      margin:0;
+      font-size:20px;
+      letter-spacing:.20em;
+      text-transform:uppercase;
+      font-weight:700;
+    }
+    .section-title p{
+      margin:0;
+      color:var(--muted2);
+      font-size:13px;
+      max-width:56ch;
+      line-height:1.55;
+    }
+
+    .panel{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      padding:20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+
+    /* Features */
+    .features{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
+    }
+    .feature{
+      grid-column: span 4;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+      min-height:130px;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .feature:hover{
+      transform: translateY(-2px);
+      border-color: rgba(217,183,126,.22);
+      background: linear-gradient(180deg, rgba(217,183,126,.08), rgba(255,255,255,.015));
+    }
+    .feature .tag{
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.12em;
+      color:rgba(255,255,255,.55);
+      text-transform:uppercase;
+    }
+    .feature h4{
+      margin:10px 0 8px;
+      font-size:14px;
+      letter-spacing:.08em;
+    }
+    .feature p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.6;
+    }
+    .feature .corner{
+      position:absolute; top:10px; right:10px;
+      width:34px; height:34px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.02);
+      display:grid; place-items:center;
+    }
+
+    /* Process */
+    .process{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+      align-items:stretch;
+    }
+    .steps{
+      display:grid;
+      gap:12px;
+    }
+    .step{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      padding:16px;
+      display:flex; gap:14px;
+      align-items:flex-start;
+      position:relative;
+    }
+    .num{
+      min-width:36px;
+      height:36px;
+      border:1px solid rgba(217,183,126,.30);
+      background: rgba(217,183,126,.12);
+      display:grid; place-items:center;
+      font-family:var(--mono);
+      color:rgba(255,255,255,.82);
+      letter-spacing:.08em;
+    }
+    .step h5{
+      margin:0 0 6px;
+      font-size:13px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+    }
+    .step p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+    .stats{
+      border:1px solid var(--line);
+      background:
+        radial-gradient(620px 360px at 10% 10%, rgba(94,211,255,.10), transparent 60%),
+        radial-gradient(620px 360px at 90% 0%, rgba(217,183,126,.10), transparent 60%),
+        rgba(255,255,255,.02);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .stats-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+      margin-top:10px;
+    }
+    .stat{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.10);
+      padding:14px;
+    }
+    .stat .value{
+      font-size:28px;
+      font-weight:800;
+      letter-spacing:-.02em;
+    }
+    .stat .label{
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin-top:6px;
+    }
+    .bar{
+      height:10px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.02);
+      position:relative;
+      overflow:hidden;
+      margin-top:14px;
+    }
+    .bar > i{
+      position:absolute; inset:0;
+      width:22%;
+      background: linear-gradient(90deg, rgba(217,183,126,.45), rgba(94,211,255,.35));
+      transform: translateX(-30%);
+      animation: barMove 2.8s ease-in-out infinite;
+    }
+    @keyframes barMove{
+      0%,100%{ transform: translateX(-30%); width:18%; opacity:.8 }
+      50%{ transform: translateX(70%); width:32%; opacity:1 }
+    }
+
+    /* Gallery */
+    .gallery{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
+    }
+    .shot{
+      grid-column: span 4;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      padding:14px;
+      cursor:pointer;
+      transition: transform .18s ease, border-color .18s ease;
+      position:relative;
+      overflow:hidden;
+      min-height:170px;
+    }
+    .shot:hover{ transform: translateY(-2px); border-color: rgba(94,211,255,.22); }
+    .shot .thumb{
+      height:120px;
+      border:1px solid rgba(255,255,255,.08);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.06), rgba(0,0,0,.05)),
+        repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 16px);
+      position:relative;
+    }
+    .shot .thumb::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(220px 160px at 30% 30%, rgba(217,183,126,.18), transparent 60%);
+      opacity:.9;
+    }
+    .shot h6{
+      margin:10px 0 6px;
+      font-size:12px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+    .shot p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .shot .chip{
+      position:absolute; top:12px; right:12px;
+      font-size:11px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      padding:6px 8px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      color: rgba(255,255,255,.75);
+    }
+
+    /* Testimonials (slider) */
+    .testi{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    .slider{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+      min-height:160px;
+    }
+    .quote{
+      font-size:16px;
+      line-height:1.65;
+      margin:0 0 10px;
+      color:rgba(255,255,255,.86);
+    }
+    .who{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+    }
+    .avatar{
+      width:34px; height:34px;
+      border:1px solid rgba(255,255,255,.12);
+      background:
+        linear-gradient(135deg, rgba(217,183,126,.20), rgba(94,211,255,.10));
+      display:grid; place-items:center;
+      font-family:var(--mono);
+      color:rgba(255,255,255,.85);
+    }
+    .slider-controls{
+      position:absolute; right:14px; top:14px;
+      display:flex; gap:8px;
+    }
+    .iconbtn{
+      width:40px; height:40px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      cursor:pointer;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease;
+      display:grid; place-items:center;
+    }
+    .iconbtn:hover{ transform:translateY(-1px); background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.14) }
+
+    /* Contact */
+    .contact{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+      align-items:stretch;
+    }
+    .form{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      padding:18px;
+    }
+    label{
+      display:block;
+      font-size:11px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:var(--muted2);
+      margin:0 0 8px;
+    }
+    input, textarea, select{
+      width:100%;
+      padding:12px 12px;
+      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.10);
+      color:rgba(255,255,255,.88);
+      outline:none;
+      font-size:14px;
+      border-radius: 0; /* retilíneo */
+      transition: border-color .16s ease, background .16s ease;
+    }
+    input:focus, textarea:focus, select:focus{
+      border-color: rgba(94,211,255,.35);
+      background: rgba(0,0,0,.24);
+    }
+    textarea{min-height:120px; resize:vertical}
+    .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    .form .row{margin-bottom:12px}
+    .helper{
+      margin-top:10px;
+      color:var(--muted2);
+      font-size:13px;
+      line-height:1.55;
+    }
+
+    .contact-card{
+      border:1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015)),
+        radial-gradient(700px 420px at 30% 10%, rgba(94,211,255,.10), transparent 55%);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .contact-card h4{
+      margin:0 0 8px;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-size:14px;
+    }
+    .contact-card p{margin:0 0 12px; color:var(--muted); line-height:1.6}
+    .info{
+      display:grid; gap:10px;
+      margin-top:12px;
+    }
+    .info .item{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+      padding:12px;
+      display:flex; justify-content:space-between; gap:10px;
+      font-size:13px;
+      color:rgba(255,255,255,.78);
+    }
+    .info .item span{color:var(--muted2); font-family:var(--mono)}
+    footer{
+      border-top:1px solid var(--line);
+      padding:22px 0;
+      color:var(--muted2);
+      font-size:12px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+    }
+    .foot{
+      display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      align-items:center;
+    }
+
+    /* Reveal animation */
+    .reveal{
+      opacity:0;
+      transform: translateY(14px);
+      transition: opacity .7s cubic-bezier(.2,.65,.2,1), transform .7s cubic-bezier(.2,.65,.2,1);
+    }
+    .reveal.on{
+      opacity:1;
+      transform: translateY(0);
+    }
+    .reveal.delay1{transition-delay:.08s}
+    .reveal.delay2{transition-delay:.16s}
+    .reveal.delay3{transition-delay:.24s}
+
+    /* Modal */
+    .modal{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.62);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:200;
+      backdrop-filter: blur(6px);
+    }
+    .modal.on{display:flex}
+    .modal-card{
+      width:min(860px, 96vw);
+      border:1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(900px 520px at 20% 0%, rgba(217,183,126,.14), transparent 55%),
+        radial-gradient(900px 520px at 90% 0%, rgba(94,211,255,.10), transparent 60%),
+        rgba(11,13,16,.92);
+      box-shadow: var(--shadow);
+      padding:18px;
+      position:relative;
+    }
+    .modal-head{
+      display:flex; justify-content:space-between; align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .modal-head h4{
+      margin:0;
+      font-size:13px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.82);
+    }
+    .close{
+      width:44px; height:44px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.02);
+      cursor:pointer;
+      display:grid; place-items:center;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease;
+    }
+    .close:hover{transform:translateY(-1px); background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.18)}
+    .modal-body{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+      height: 360px;
+      position:relative;
+      overflow:hidden;
+    }
+    .modal-body::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.06), rgba(0,0,0,.05)),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px 18px);
+      opacity:1;
+    }
+    .modal-body::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(360px 240px at 30% 30%, rgba(217,183,126,.22), transparent 62%);
+      opacity:.9;
+    }
+    .modal-foot{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:12px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+
+    /* WhatsApp floating */
+    .float-wa{
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      z-index:300;
+    }
+    .wa{
+      display:flex; align-items:center; gap:10px;
+      padding:12px 14px;
+      border:1px solid rgba(108,255,181,.28);
+      background: linear-gradient(180deg, rgba(108,255,181,.16), rgba(0,0,0,.18));
+      color:rgba(255,255,255,.88);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      font-size:12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+      user-select:none;
+    }
+    .wa:hover{transform:translateY(-2px); border-color:rgba(108,255,181,.45)}
+    .wa svg{opacity:.95}
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero-grid{grid-template-columns: 1fr; }
+      .process{grid-template-columns: 1fr;}
+      .contact{grid-template-columns: 1fr;}
+      .features .feature{grid-column: span 6;}
+      .gallery .shot{grid-column: span 6;}
+      nav{display:none}
+      .burger{display:grid; place-items:center}
+      .mobile-nav{display:none}
+      .mobile-nav.on{display:block}
+    }
+    @media (max-width: 560px){
+      .hero h2{font-size:34px}
+      .features .feature{grid-column: span 12;}
+      .gallery .shot{grid-column: span 12;}
+      .grid2{grid-template-columns:1fr}
+      .btn{width:100%; justify-content:center}
+      .hero-cta{flex-direction:column}
+      .actions{gap:8px}
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .scanline, .bar > i{animation:none}
+      .reveal{transition:none}
+      .btn, .iconbtn, .feature, .shot, .wa{transition:none}
+      .cursor-glow{display:none}
+      html{scroll-behavior:auto}
+    }
+  </style>
 </head>
-<body>
 
-<header>
-    <h1>Móveis Planejados Ideal</h1>
-    <p>Soluções sob medida para sua casa</p>
-</header>
+<body class="gridlines">
+  <div class="progress" id="progress"></div>
+  <div class="cursor-glow" id="glow" aria-hidden="true"></div>
 
-<main>
-    <div class="section">
-        <h2>Quem Somos</h2>
-        <p>
-            Somos especialistas em móveis planejados para cozinhas, quartos,
-            salas, escritórios e ambientes comerciais. Trabalhamos com qualidade,
-            design moderno e acabamento de alto padrão.
-        </p>
+  <header>
+    <div class="wrap">
+      <div class="topbar">
+        <a class="brand" href="#top" aria-label="Komponente Móveis Planejados">
+          <div class="mark" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M3 3h5v5H3V3Z" stroke="rgba(255,255,255,.78)"/>
+              <path d="M10 3h5v5h-5V3Z" stroke="rgba(255,255,255,.78)"/>
+              <path d="M3 10h5v5H3v-5Z" stroke="rgba(255,255,255,.78)"/>
+              <path d="M10 10h5v5h-5v-5Z" stroke="rgba(255,255,255,.78)"/>
+            </svg>
+          </div>
+          <div>
+            <h1>KOMPONENTE</h1>
+            <span>MÓVEIS PLANEJADOS SOB MEDIDA</span>
+          </div>
+        </a>
+
+        <nav aria-label="Navegação principal">
+          <a href="#sobre">Sobre</a>
+          <a href="#diferenciais">Diferenciais</a>
+          <a href="#processo">Processo</a>
+          <a href="#projetos">Projetos</a>
+          <a href="#contato">Contato</a>
+        </nav>
+
+        <div class="actions">
+          <a class="btn" href="#projetos" id="btnVerProjetos">Ver Projetos</a>
+          <a class="btn primary" href="#contato" id="btnOrcamento">Solicitar Orçamento</a>
+          <button class="burger" id="burger" aria-label="Abrir menu">
+            <span></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="mobile-nav" id="mobileNav" aria-label="Navegação mobile">
+        <a href="#sobre">Sobre</a>
+        <a href="#diferenciais">Diferenciais</a>
+        <a href="#processo">Processo</a>
+        <a href="#projetos">Projetos</a>
+        <a href="#contato">Contato</a>
+      </div>
     </div>
+  </header>
 
-    <div class="section">
-        <h2>Nossos Serviços</h2>
-        <ul>
-            <li>Cozinhas planejadas</li>
-            <li>Guarda-roupas sob medida</li>
-            <li>Móveis para escritório</li>
-            <li>Projetos personalizados</li>
-        </ul>
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div>
+            <div class="kicker reveal on"><i></i> 10 anos de experiência • sob medida • alto padrão</div>
+
+            <h2 class="reveal on delay1">
+              Móveis planejados <span style="color:rgba(255,255,255,.98)">retilíneos</span>,
+              precisos e <span style="color:var(--brand)">inteligentes</span>.
+            </h2>
+
+            <p class="reveal on delay2">
+              A Komponente cria móveis sob medida com projeto funcional, acabamento premium e montagem impecável.
+              Você não compra “armário”. Você compra <b>organização</b>, <b>estética</b> e <b>durabilidade</b>.
+            </p>
+
+            <div class="hero-cta reveal on delay3">
+              <a class="btn primary" href="#contato">Quero meu projeto</a>
+              <a class="btn" href="#processo">Como funciona</a>
+            </div>
+
+            <div class="pill-row reveal on delay3">
+              <div class="pill"><span class="dot"></span> <b>Personalização total</b> • medidas reais</div>
+              <div class="pill"><span class="dot"></span> <b>Projeto 3D</b> • antes de produzir</div>
+              <div class="pill"><span class="dot"></span> <b>Prazo claro</b> • sem conversa mole</div>
+            </div>
+          </div>
+
+          <div class="hero-card reveal on delay2" role="article" aria-label="Destaque Komponente">
+            <div class="img" aria-hidden="true"></div>
+            <div class="scanline" aria-hidden="true"></div>
+            <div class="caption">
+              <div class="row"><span>Foco</span> <strong>Ambientes completos</strong></div>
+              <div class="row"><span>Estilo</span> <strong>Clean / Retilíneo / Premium</strong></div>
+              <div class="row"><span>Entrega</span> <strong>Projeto → Produção → Montagem</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOBRE -->
+    <section id="sobre">
+      <div class="wrap">
+        <div class="section-title">
+          <h3 class="reveal">Sobre</h3>
+          <p class="reveal delay1">
+            Uma década transformando espaços com marcenaria sob medida, design limpo e execução consistente.
+          </p>
+        </div>
+
+        <div class="panel reveal delay2">
+          <div style="display:grid; grid-template-columns: 1.2fr .8fr; gap:14px; align-items:start;" class="about-grid">
+            <div>
+              <p style="margin:0; color:var(--muted); line-height:1.75;">
+                A <b>Komponente</b> é uma loja de <b>móveis planejados</b> com <b>10 anos de experiência</b>, especializada em
+                ambientes sob medida: cozinhas, closets, quartos, banheiros, home office e áreas comerciais.
+                Nosso compromisso é simples: <b>medida correta, projeto bem pensado e acabamento de verdade</b>.
+              </p>
+
+              <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+                <span class="pill"><b>Atendimento consultivo</b> • sem pressão</span>
+                <span class="pill"><b>Materiais selecionados</b> • padrão premium</span>
+                <span class="pill"><b>Montagem detalhista</b> • alinhamento perfeito</span>
+              </div>
+            </div>
+
+            <div style="border:1px solid var(--line); background:rgba(0,0,0,.16); padding:14px;">
+              <div style="font-family:var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--muted2); font-size:11px;">
+                Compromissos Komponente
+              </div>
+              <ul style="margin:12px 0 0; padding-left:18px; color:rgba(255,255,255,.78); line-height:1.7;">
+                <li>Projeto claro e objetivo</li>
+                <li>Acabamento limpo, sem “gambiarras”</li>
+                <li>Organização de espaço e fluxo</li>
+                <li>Entrega com padrão e responsabilidade</li>
+              </ul>
+              <div class="bar" aria-hidden="true"><i></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIFERENCIAIS -->
+    <section id="diferenciais">
+      <div class="wrap">
+        <div class="section-title">
+          <h3 class="reveal">Diferenciais</h3>
+          <p class="reveal delay1">
+            Retilíneo por estética. Preciso por engenharia. Bonito por intenção.
+          </p>
+        </div>
+
+        <div class="features">
+          <div class="feature reveal">
+            <div class="corner" aria-hidden="true">⟂</div>
+            <div class="tag">01 • Projeto</div>
+            <h4>3D e funcionalidade</h4>
+            <p>Antes de produzir, você vê o layout e ajusta detalhes. Menos erro. Mais resultado.</p>
+          </div>
+
+          <div class="feature reveal delay1">
+            <div class="corner" aria-hidden="true">⟂</div>
+            <div class="tag">02 • Execução</div>
+            <h4>Acabamento de alto padrão</h4>
+            <p>Encaixes limpos, alinhamento, recortes bem feitos e visual “de revista”.</p>
+          </div>
+
+          <div class="feature reveal delay2">
+            <div class="corner" aria-hidden="true">⟂</div>
+            <div class="tag">03 • Método</div>
+            <h4>Processo previsível</h4>
+            <p>Etapas claras: briefing, medição, projeto, produção, montagem e conferência final.</p>
+          </div>
+
+          <div class="feature reveal delay3">
+            <div class="corner" aria-hidden="true">⟂</div>
+            <div class="tag">04 • Personalização</div>
+            <h4>Sob medida de verdade</h4>
+            <p>Dimensão real do seu ambiente, com escolhas de materiais e divisão interna do seu jeito.</p>
+          </div>
+
+          <div class="feature reveal">
+            <div class="corner" aria-hidden="true">⟂</div>
+            <div class="tag">05 • Confiança</div>
+            <h4>10 anos de consistência</h4>
+            <p>Você quer alguém que entrega. Ponto. Nosso histórico fala por nós.</p>
+          </div>
+
+          <div class="feature reveal delay1">
+            <div class="corner" aria-hidden="true">⟂</div>
+            <div class="tag">06 • Pós</div>
+            <h4>Suporte e ajuste fino</h4>
+            <p>Finalizado não significa “tchau”. A gente garante que fique perfeito no uso real.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESSO + STATS -->
+    <section id="processo">
+      <div class="wrap">
+        <div class="section-title">
+          <h3 class="reveal">Processo</h3>
+          <p class="reveal delay1">
+            Do briefing à montagem: um fluxo simples, direto e eficiente.
+          </p>
+        </div>
+
+        <div class="process">
+          <div class="steps">
+            <div class="step reveal">
+              <div class="num">01</div>
+              <div>
+                <h5>Briefing rápido</h5>
+                <p>Você diz o que precisa: estilo, rotina, prioridades e orçamento estimado. Sem enrolação.</p>
+              </div>
+            </div>
+
+            <div class="step reveal delay1">
+              <div class="num">02</div>
+              <div>
+                <h5>Medição e análise</h5>
+                <p>Medição correta + estudo do espaço (pontos elétricos, hidráulicos, fluxo e abertura).</p>
+              </div>
+            </div>
+
+            <div class="step reveal delay2">
+              <div class="num">03</div>
+              <div>
+                <h5>Projeto 3D e ajustes</h5>
+                <p>Apresentação do layout e ajustes finos. Você aprova vendo o resultado antes.</p>
+              </div>
+            </div>
+
+            <div class="step reveal delay3">
+              <div class="num">04</div>
+              <div>
+                <h5>Produção e montagem</h5>
+                <p>Produção com padrão e montagem com acabamento limpo — alinhamento e esquadro.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="stats reveal delay2" aria-label="Números Komponente">
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:12px;">
+              <div>
+                <div style="font-family:var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--muted2); font-size:11px;">
+                  Indicadores de confiança
+                </div>
+                <div style="margin-top:6px; color:rgba(255,255,255,.78); line-height:1.6;">
+                  Métricas simbólicas para passar segurança (você pode editar depois).
+                </div>
+              </div>
+              <div style="font-family:var(--mono); color:rgba(255,255,255,.55); font-size:11px; letter-spacing:.12em;">
+                KMP/STD
+              </div>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat">
+                <div class="value"><span class="count" data-to="10">0</span>+</div>
+                <div class="label">Anos de experiência</div>
+              </div>
+              <div class="stat">
+                <div class="value"><span class="count" data-to="650">0</span>+</div>
+                <div class="label">Projetos entregues</div>
+              </div>
+              <div class="stat">
+                <div class="value"><span class="count" data-to="98">0</span>%</div>
+                <div class="label">Satisfação (média)</div>
+              </div>
+              <div class="stat">
+                <div class="value"><span class="count" data-to="21">0</span>d</div>
+                <div class="label">Prazo médio (ex.)</div>
+              </div>
+            </div>
+
+            <div class="bar" aria-hidden="true" style="margin-top:16px;"><i></i></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJETOS -->
+    <section id="projetos">
+      <div class="wrap">
+        <div class="section-title">
+          <h3 class="reveal">Projetos</h3>
+          <p class="reveal delay1">
+            Clique em um card para abrir detalhes (modal). Troque depois por fotos reais quando quiser.
+          </p>
+        </div>
+
+        <div class="gallery">
+          <article class="shot reveal" data-title="Cozinha Retilínea" data-desc="Layout limpo, divisão inteligente, acabamento premium e organização real para o dia a dia.">
+            <div class="chip">Cozinha</div>
+            <div class="thumb" aria-hidden="true"></div>
+            <h6>Cozinha planejada</h6>
+            <p>Minimalista, funcional e com presença.</p>
+          </article>
+
+          <article class="shot reveal delay1" data-title="Closet Sob Medida" data-desc="Divisões otimizadas, acesso rápido e acabamento que valoriza o ambiente.">
+            <div class="chip">Closet</div>
+            <div class="thumb" aria-hidden="true"></div>
+            <h6>Closet sob medida</h6>
+            <p>Organização que muda sua rotina.</p>
+          </article>
+
+          <article class="shot reveal delay2" data-title="Home Office" data-desc="Ergonomia, cabos organizados e estética clean para produtividade de verdade.">
+            <div class="chip">Office</div>
+            <div class="thumb" aria-hidden="true"></div>
+            <h6>Home office</h6>
+            <p>Trabalho sério pede um espaço sério.</p>
+          </article>
+
+          <article class="shot reveal delay3" data-title="Quarto Planejado" data-desc="Painel, armários e solução de espaço com visual retilíneo e atemporal.">
+            <div class="chip">Quarto</div>
+            <div class="thumb" aria-hidden="true"></div>
+            <h6>Quarto completo</h6>
+            <p>Conforto + design sem exagero.</p>
+          </article>
+
+          <article class="shot reveal" data-title="Banheiro Planejado" data-desc="Resistência, acabamento limpo e aproveitamento total do espaço, sem poluição visual.">
+            <div class="chip">Banheiro</div>
+            <div class="thumb" aria-hidden="true"></div>
+            <h6>Banheiro</h6>
+            <p>Funcional e elegante, do jeito certo.</p>
+          </article>
+
+          <article class="shot reveal delay1" data-title="Comercial / Loja" data-desc="Mobiliário sob medida para valorizar produto e fluxo de cliente, com padrão premium.">
+            <div class="chip">Comercial</div>
+            <div class="thumb" aria-hidden="true"></div>
+            <h6>Ambiente comercial</h6>
+            <p>Design que vende sem gritar.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEPOIMENTOS -->
+    <section aria-label="Depoimentos">
+      <div class="wrap">
+        <div class="section-title">
+          <h3 class="reveal">Depoimentos</h3>
+          <p class="reveal delay1">
+            Texto curto, direto e convincente. Sem “novelinha”.
+          </p>
+        </div>
+
+        <div class="testi">
+          <div class="slider reveal delay2" id="slider">
+            <div class="slider-controls">
+              <button class="iconbtn" id="prev" aria-label="Anterior">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M14 6l-6 6 6 6" stroke="rgba(255,255,255,.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <button class="iconbtn" id="next" aria-label="Próximo">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M10 6l6 6-6 6" stroke="rgba(255,255,255,.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <p class="quote" id="quote">“Projeto ficou exatamente como imaginei. Acabamento limpo e montagem bem feita. Sem dor de cabeça.”</p>
+            <div class="who">
+              <div class="avatar" id="avatar">RC</div>
+              <div>
+                <div id="who">R. Carvalho</div>
+                <div style="color:var(--muted2); font-size:11px; margin-top:2px;" id="where">Cozinha planejada</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTATO -->
+    <section id="contato">
+      <div class="wrap">
+        <div class="section-title">
+          <h3 class="reveal">Contato</h3>
+          <p class="reveal delay1">
+            Preencha e a Komponente entra em contato. Se quiser, já pule pro WhatsApp.
+          </p>
+        </div>
+
+        <div class="contact">
+          <form class="form reveal delay2" id="leadForm">
+            <div class="grid2">
+              <div class="row">
+                <label for="nome">Nome</label>
+                <input id="nome" name="nome" placeholder="Seu nome" required />
+              </div>
+              <div class="row">
+                <label for="fone">WhatsApp</label>
+                <input id="fone" name="fone" placeholder="(xx) xxxxx-xxxx" required />
+              </div>
+            </div>
+
+            <div class="row">
+              <label for="ambiente">Ambiente</label>
+              <select id="ambiente" name="ambiente" required>
+                <option value="" selected disabled>Selecione</option>
+                <option>Cozinha</option>
+                <option>Closet</option>
+                <option>Quarto</option>
+                <option>Banheiro</option>
+                <option>Home Office</option>
+                <option>Comercial</option>
+                <option>Outro</option>
+              </select>
+            </div>
+
+            <div class="row">
+              <label for="msg">Mensagem</label>
+              <textarea id="msg" name="msg" placeholder="Ex.: Quero um closet em L, com portas, gavetas e espaço pra malas." required></textarea>
+            </div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn primary" type="submit">Enviar</button>
+              <button class="btn" type="button" id="copyMsg">Copiar texto</button>
+            </div>
+
+            <div class="helper" id="formHelper">
+              Dica: ao enviar, você pode abrir o WhatsApp com a mensagem pronta (sem depender de backend).
+            </div>
+          </form>
+
+          <aside class="contact-card reveal delay3">
+            <h4>Komponente Móveis Planejados</h4>
+            <p>
+              <b>10 anos</b> de experiência em móveis sob medida, com estética retilínea e foco em funcionalidade.
+              Aqui é projeto sério, execução limpa e entrega com padrão.
+            </p>
+
+            <div class="info">
+              <div class="item"><div>Atendimento</div><span>Seg–Sáb</span></div>
+              <div class="item"><div>Especialidade</div><span>Sob medida</span></div>
+              <div class="item"><div>Padrão</div><span>Premium</span></div>
+            </div>
+
+            <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+              <a class="btn" href="#projetos">Ver projetos</a>
+              <a class="btn primary" href="#" id="openWhats">Abrir WhatsApp</a>
+            </div>
+
+            <p style="margin-top:14px; color:var(--muted2); font-size:13px; line-height:1.6;">
+              *Troque o número do WhatsApp no JS no final do arquivo. Também dá pra trocar as métricas e textos.
+            </p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        <div class="foot">
+          <div>© <span id="year"></span> Komponente • Móveis Planejados</div>
+          <div style="font-family:var(--mono); color:rgba(255,255,255,.45);">ESTÉTICA RETILÍNEA • EXECUÇÃO LIMPA • PADRÃO PREMIUM</div>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- WhatsApp Floating -->
+  <div class="float-wa">
+    <a class="wa" href="#" id="waFloat" aria-label="Falar no WhatsApp">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M20 12a8 8 0 0 1-12.8 6.4L4 19l.6-3.2A8 8 0 1 1 20 12Z" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M9 10c.5 2 2.5 4 4.5 4.5.6.1 1.2-.1 1.6-.6l.6-.7-1.5-1.2-.5.4c-.2.2-.5.2-.8.1-1-.4-2.1-1.5-2.5-2.5-.1-.3-.1-.6.1-.8l.4-.5L10.7 7l-.7.6c-.5.4-.7 1-.6 1.4Z" fill="rgba(255,255,255,.75)"/>
+      </svg>
+      WhatsApp
+    </a>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Detalhes do projeto">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h4 id="modalTitle">Projeto</h4>
+        <button class="close" id="closeModal" aria-label="Fechar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M6 6l12 12M18 6L6 18" stroke="rgba(255,255,255,.85)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body" aria-hidden="true"></div>
+      <div class="modal-foot">
+        <div id="modalDesc" style="color:var(--muted);"></div>
+        <div style="margin-left:auto">
+          <a class="btn primary" href="#contato" id="modalCta">Quero algo assim</a>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="section">
-        <h2>Contato</h2>
-        <p>
-            📞 Telefone: (11) 99999-9999 <br>
-            📧 Email: contato@moveisideal.com.br
-        </p>
-    </div>
-</main>
+  <script>
+    // =========================
+    // CONFIG (edite aqui)
+    // =========================
+    const WHATSAPP_NUMBER = "5585996636822"; // coloque o número com DDI (55) e DDD, sem + e sem espaços
+    const BRAND_NAME = "Komponente Móveis Planejados";
 
-<footer>
-    <p>
-        © 2026 - Móveis Planejados Ideal <br>
-        <a href="buscar.html">Ir para a página de busca</a>
-    </p>
-</footer>
+    // =========================
+    // Helpers
+    // =========================
+    const $ = (s, el=document) => el.querySelector(s);
+    const $$ = (s, el=document) => Array.from(el.querySelectorAll(s));
 
+    // Smooth scroll
+    function smoothTo(hash){
+      const target = document.querySelector(hash);
+      if(!target) return;
+      target.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+
+    // =========================
+    // Mobile menu
+    // =========================
+    const burger = $("#burger");
+    const mobileNav = $("#mobileNav");
+    burger?.addEventListener("click", ()=>{
+      mobileNav.classList.toggle("on");
+    });
+    $$("#mobileNav a").forEach(a=>{
+      a.addEventListener("click", ()=> mobileNav.classList.remove("on"));
+    });
+
+    // =========================
+    // Scroll progress
+    // =========================
+    const progress = $("#progress");
+    function updateProgress(){
+      const doc = document.documentElement;
+      const scrollTop = doc.scrollTop || document.body.scrollTop;
+      const scrollHeight = doc.scrollHeight - doc.clientHeight;
+      const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      progress.style.width = pct.toFixed(2) + "%";
+    }
+    window.addEventListener("scroll", updateProgress, {passive:true});
+    updateProgress();
+
+    // =========================
+    // Cursor glow (discreto)
+    // =========================
+    const glow = $("#glow");
+    let glowOn = true;
+    window.addEventListener("mousemove", (e)=>{
+      if(!glow || !glowOn) return;
+      glow.style.left = e.clientX + "px";
+      glow.style.top  = e.clientY + "px";
+    }, {passive:true});
+    window.addEventListener("mouseout", ()=>{ if(glow) glow.style.opacity = .25; });
+    window.addEventListener("mouseover", ()=>{ if(glow) glow.style.opacity = .75; });
+
+    // =========================
+    // Reveal on scroll
+    // =========================
+    const revealEls = $$(".reveal");
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{
+        if(en.isIntersecting){
+          en.target.classList.add("on");
+          io.unobserve(en.target);
+        }
+      });
+    }, {threshold: .15});
+    revealEls.forEach(el=>{
+      if(!el.classList.contains("on")) io.observe(el);
+    });
+
+    // =========================
+    // Count-up numbers (quando stats aparecer)
+    // =========================
+    function animateCount(el, to, duration=1100){
+      const start = performance.now();
+      const from = 0;
+      const ease = (t)=> 1 - Math.pow(1-t, 3);
+
+      function frame(now){
+        const p = Math.min(1, (now - start) / duration);
+        const val = Math.round(from + (to - from) * ease(p));
+        el.textContent = val.toString();
+        if(p < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    const statsBox = document.querySelector(".stats");
+    if(statsBox){
+      const ioStats = new IntersectionObserver((entries)=>{
+        entries.forEach(en=>{
+          if(en.isIntersecting){
+            $$(".count", statsBox).forEach(c=>{
+              const to = parseInt(c.dataset.to || "0", 10);
+              animateCount(c, to, 1000 + Math.random()*600);
+            });
+            ioStats.disconnect();
+          }
+        });
+      }, {threshold: .35});
+      ioStats.observe(statsBox);
+    }
+
+    // =========================
+    // Gallery modal
+    // =========================
+    const modal = $("#modal");
+    const modalTitle = $("#modalTitle");
+    const modalDesc  = $("#modalDesc");
+    const closeModal = $("#closeModal");
+
+    function openModal(title, desc){
+      modalTitle.textContent = title || "Projeto";
+      modalDesc.textContent = desc || "";
+      modal.classList.add("on");
+      document.body.style.overflow = "hidden";
+    }
+    function hideModal(){
+      modal.classList.remove("on");
+      document.body.style.overflow = "";
+    }
+    closeModal?.addEventListener("click", hideModal);
+    modal?.addEventListener("click", (e)=>{
+      if(e.target === modal) hideModal();
+    });
+    window.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape" && modal.classList.contains("on")) hideModal();
+    });
+
+    $$(".shot").forEach(card=>{
+      card.addEventListener("click", ()=>{
+        openModal(card.dataset.title, card.dataset.desc);
+      });
+    });
+
+    // =========================
+    // Testimonials slider
+    // =========================
+    const testimonials = [
+      {q:"“Projeto ficou exatamente como imaginei. Acabamento limpo e montagem bem feita. Sem dor de cabeça.”", who:"R. Carvalho", where:"Cozinha planejada", av:"RC"},
+      {q:"“O closet ficou organizado de verdade. Parece simples, mas muda completamente a rotina.”", who:"M. Andrade", where:"Closet sob medida", av:"MA"},
+      {q:"“Home office ficou profissional. Layout inteligente, estética reta e zero bagunça visual.”", who:"P. Nunes", where:"Home office", av:"PN"},
+      {q:"“O quarto ficou clean e elegante. Sem exagero. Só o essencial bem executado.”", who:"L. Freitas", where:"Quarto completo", av:"LF"},
+    ];
+    let tIndex = 0;
+    const quoteEl = $("#quote");
+    const whoEl   = $("#who");
+    const whereEl = $("#where");
+    const avEl    = $("#avatar");
+    const prevBtn = $("#prev");
+    const nextBtn = $("#next");
+    const slider  = $("#slider");
+
+    function setTestimonial(i){
+      tIndex = (i + testimonials.length) % testimonials.length;
+      const t = testimonials[tIndex];
+
+      // micro animação
+      slider.animate(
+        [{opacity:.0, transform:"translateY(6px)"},{opacity:1, transform:"translateY(0)"}],
+        {duration:260, easing:"cubic-bezier(.2,.7,.2,1)"}
+      );
+
+      quoteEl.textContent = t.q;
+      whoEl.textContent = t.who;
+      whereEl.textContent = t.where;
+      avEl.textContent = t.av;
+    }
+    prevBtn?.addEventListener("click", ()=> setTestimonial(tIndex-1));
+    nextBtn?.addEventListener("click", ()=> setTestimonial(tIndex+1));
+
+    // Auto-rotate (suave)
+    let auto = setInterval(()=> setTestimonial(tIndex+1), 6500);
+    ["mouseenter","touchstart"].forEach(ev=>{
+      slider?.addEventListener(ev, ()=>{ clearInterval(auto); auto=null; }, {passive:true});
+    });
+    ["mouseleave","touchend"].forEach(ev=>{
+      slider?.addEventListener(ev, ()=>{
+        if(!auto) auto = setInterval(()=> setTestimonial(tIndex+1), 6500);
+      }, {passive:true});
+    });
+
+    // =========================
+    // WhatsApp message builder + actions
+    // =========================
+    function buildMessage(data){
+      const lines = [
+        `Olá! Quero um projeto com a ${BRAND_NAME}.`,
+        `Nome: ${data.nome || "-"}`,
+        `WhatsApp: ${data.fone || "-"}`,
+        `Ambiente: ${data.ambiente || "-"}`,
+        `Mensagem: ${data.msg || "-"}`,
+      ];
+      return lines.join("\n");
+    }
+
+    function openWhatsApp(message){
+      const text = encodeURIComponent(message);
+      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    // Floating WA
+    const waFloat = $("#waFloat");
+    waFloat?.addEventListener("click", (e)=>{
+      e.preventDefault();
+      openWhatsApp(`Olá! Vim pelo site e quero um orçamento com a ${BRAND_NAME}.`);
+    });
+
+    // Contact card WA
+    $("#openWhats")?.addEventListener("click", (e)=>{
+      e.preventDefault();
+      openWhatsApp(`Olá! Quero um projeto com a ${BRAND_NAME}. Podemos conversar?`);
+    });
+
+    // Form submit: abre WhatsApp (sem backend)
+    const form = $("#leadForm");
+    const helper = $("#formHelper");
+    form?.addEventListener("submit", (e)=>{
+      e.preventDefault();
+      const data = {
+        nome: $("#nome").value.trim(),
+        fone: $("#fone").value.trim(),
+        ambiente: $("#ambiente").value,
+        msg: $("#msg").value.trim(),
+      };
+
+      const message = buildMessage(data);
+
+      // Feedback visual rápido
+      helper.textContent = "Abrindo WhatsApp com sua mensagem pronta…";
+      helper.animate([{opacity:.2},{opacity:1}],{duration:260, easing:"ease-out"});
+
+      openWhatsApp(message);
+
+      setTimeout(()=>{
+        helper.textContent = "Se preferir, você também pode copiar a mensagem e enviar manualmente.";
+      }, 900);
+    });
+
+    // Copy message
+    $("#copyMsg")?.addEventListener("click", async ()=>{
+      const data = {
+        nome: $("#nome").value.trim(),
+        fone: $("#fone").value.trim(),
+        ambiente: $("#ambiente").value,
+        msg: $("#msg").value.trim(),
+      };
+      const message = buildMessage(data);
+      try{
+        await navigator.clipboard.writeText(message);
+        helper.textContent = "Mensagem copiada. Agora é só colar no WhatsApp.";
+      }catch(err){
+        helper.textContent = "Não consegui copiar automaticamente. Selecione e copie manualmente.";
+        // fallback
+        $("#msg").value = message;
+        $("#msg").focus();
+        $("#msg").select();
+      }
+      helper.animate([{opacity:.2},{opacity:1}],{duration:260, easing:"ease-out"});
+    });
+
+    // =========================
+    // Anchor smooth scrolling
+    // =========================
+    document.addEventListener("click", (e)=>{
+      const a = e.target.closest('a[href^="#"]');
+      if(!a) return;
+      const href = a.getAttribute("href");
+      if(href === "#") return;
+      e.preventDefault();
+      smoothTo(href);
+    });
+
+    // Year
+    $("#year").textContent = new Date().getFullYear();
+
+    // Optional: disable cursor glow on touch devices
+    const isTouch = matchMedia("(pointer: coarse)").matches;
+    if(isTouch && glow){
+      glowOn = false;
+      glow.style.display = "none";
+    }
+
+    // Micro: highlight active section in nav (desktop)
+    const navLinks = $$("nav a");
+    const sections = ["#sobre","#diferenciais","#processo","#projetos","#contato"].map(id=>document.querySelector(id));
+    const ioNav = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{
+        if(en.isIntersecting){
+          navLinks.forEach(l=>l.style.color="");
+          const id = "#" + en.target.id;
+          const link = navLinks.find(l=>l.getAttribute("href")===id);
+          if(link) link.style.color = "rgba(255,255,255,.92)";
+        }
+      });
+    }, {threshold:.35});
+    sections.forEach(s=> s && ioNav.observe(s));
+  </script>
 </body>
 </html>
+
